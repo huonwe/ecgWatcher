@@ -1,9 +1,12 @@
 package main
 
 import (
+	"ecgAgent/utils"
 	"log"
+	"net/http"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -28,8 +31,13 @@ func main() {
 	token.Wait()
 	log.Println("Subscribed to ", topic)
 
-	// 阻塞
-	select {}
+	r := gin.Default()
+	r.GET("/", func(ctx *gin.Context) {
+		ctx.String(http.StatusOK, "READY")
+	})
+	log.Print("running on " + utils.LocalHost() + ":8080")
+	r.Run()
+
 }
 
 var messageReceiveHandler mqtt.MessageHandler = func(c mqtt.Client, m mqtt.Message) {
