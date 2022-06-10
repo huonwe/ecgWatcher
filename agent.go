@@ -31,12 +31,17 @@ func main() {
 	token.Wait()
 	log.Println("Subscribed to ", topic)
 
-	r := gin.Default()
-	r.GET("/", func(ctx *gin.Context) {
-		ctx.String(http.StatusOK, "READY")
+	router := gin.Default()
+	// 网页静态资源
+	router.LoadHTMLGlob("views/*")
+	router.Static("/static", "./static")
+	// everyone can access
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.HTML(http.StatusOK, "index.html", nil)
 	})
+
 	log.Print("running on " + utils.LocalHost() + ":8080")
-	r.Run()
+	router.Run("0.0.0.0:8080")
 
 }
 
